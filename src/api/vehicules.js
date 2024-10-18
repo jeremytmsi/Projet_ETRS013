@@ -13,6 +13,11 @@ router.get("/all_vehicules",(req,res) => {
                             make
                             model
                         }
+                        range {
+                            chargetrip_range {
+                                worst
+                            }
+                        }
                     }
                 }
             `
