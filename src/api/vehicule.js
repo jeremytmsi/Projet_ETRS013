@@ -17,6 +17,11 @@ router.get("/all_vehicules",(req,res) => {
                             worst
                         }
                     }
+                    media {
+                        image {
+                            url
+                        }
+                    }
                 }
             }
         `

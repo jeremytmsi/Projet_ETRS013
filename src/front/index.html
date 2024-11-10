@@ -30,8 +30,22 @@
                         </div>
                     </div>
 
-                    <div id="vehicules">
+                    <div id="vehicules" class="flex flex-wrap">
                         <h2>Choississez votre voiture</h2>
+                        <div id="car-list">
+                            <template id="vehicle-template">
+                                <div class="flex items-center rounded-lg">
+                                    <img>
+                                    <div>
+                                        <h3></h3>
+                                        <p></p>
+                                        <p>
+                                            Autonomie : <span class="vehicle-range"></span> km (min)
+                                        </p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
                     <button type="submit" id="form-submit">Calculer l'itinéraire</button>

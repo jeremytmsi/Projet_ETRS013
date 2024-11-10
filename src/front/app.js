@@ -9,22 +9,26 @@ L.control.scale({position: 'bottomright', imperial: false, maxWidth: 100}).addTo
 L.control.zoom({position: 'bottomright'}).addTo(map)
 
 let displayCars = async () => {
-    let cars = (await fetch("https://voitureselectapi.vercel.app/api/vehicules/all_vehicules")).json()
+    let response = await fetch("http://localhost:3000/api/vehicules/all_vehicules")
+    let cars = await response.json()
+
     let carList = document.getElementById("car-list")
     let template = document.getElementById("vehicle-template")
+
+    console.log(template)
 
     let selectedCar = null
 
     cars.forEach((car) => {
-        let carCard = template.contentEditable.cloneNode(true)
+        let carCard = template.content.cloneNode(true)
 
         let img = carCard.querySelector('img')
-        img.src = car.image
-        img.alt = `${car.make} ${car.model}`
+        img.src = car.media.image.url
+        img.alt = `${car.naming.make} ${car.naming.model}`
 
-        carCard.querySelector("h3").textContent = `${car.make} ${car.model}`
+        carCard.querySelector("h3").textContent = `${car.naming.make} ${car.naming.model}`
         carCard.querySelector("p").textContent = car.version
-        carCard.querySelector(".vehicule-range").textContent = car.range_worst
+        carCard.querySelector(".vehicle-range").textContent = car.range.chargetrip_range.worst
 
         carCard.querySelector("div").addEventListener("click", () => {
             this.setAttribute("selectedCar", 'true')
