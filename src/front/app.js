@@ -1,4 +1,5 @@
 let init = () => {
+    
     let map = L.map("map").setView([51.505,-0.09], 13)
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -17,37 +18,37 @@ let init = () => {
         debugLayer: L.layerGroup(),
     };
 
-    green = L.icon({
-        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-    });
-
-    red = L.icon({
-        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-    });
-
-    orange = L.icon({
-        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-    });
-
-    // Default icon
-    def = L.icon({
-        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-    });
-
     return { map, layers };
 }
+
+green = L.icon({
+    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+});
+
+red = L.icon({
+    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+});
+
+orange = L.icon({
+    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+});
+
+// Default icon
+def = L.icon({
+    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+});
 
 
 
@@ -128,7 +129,7 @@ let handleSuggestions = (inputElement, suggestionsContainer, point) => {
     })
 }
 
-init()
+let {map, layers} = init()
 displayCars()
 
 let start = document.getElementById("start")
@@ -136,10 +137,43 @@ let end = document.getElementById("end")
 let startSuggestions = document.getElementById("startSuggestions")
 let endSuggestions = document.getElementById("endSuggestions")
 
-handleSuggestions(start,startSuggestions,startPoint)
-handleSuggestions(end,endSuggestions, endPoint)
+handleSuggestions(start,startSuggestions)
+handleSuggestions(end,endSuggestions)
 
 // Gestion soumission form
-document.getElementById('form-submit').addEventListener("click",(e) => {
+document.getElementById('form-submit').addEventListener("click",async (e) => {
     e.preventDefault()
+})
+
+let addMarker = (layer, lat,lon,label, {icon}) => {
+    let marker = L.marker([lat,lon]).addTo(map)
+    layer.addLayer(marker)
+}
+
+let clearLayers = (layers) => {
+    Object.values(layers).forEach(layer => layer.clearLayers())
+}
+
+let drawRoute = (layer, coordinates) => {
+    if(coordinates && coordinates.length > 0){
+        let routeCoords = coordinates.map(coord => [parseFloat(coord[1]),parseFloat(coord[0])])
+        let polyline = L.polyline(routeCoords,{color: "blue"})
+        layer.addLayer(polyline)
+        layer._map.fitBounds(polyline.getBounds())
+        return polyline
+    } else {
+        console.error("Aucune donnée")
+        return null
+    }
+}
+
+fetch("http://localhost:3000/api/route?startPoint=Paris&endPoint=Estrun", {
+    method: "POST"
+}).then((res) => {
+    res.json().then(data => {
+        console.log(data)
+        drawRoute(layers.routeLayer,data.features[0].geometry.coordinates)
+        addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", def)
+        addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Depart", def)
+    })
 })

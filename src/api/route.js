@@ -23,7 +23,8 @@ router.post("/", async (req,res) => {
     })
 
     let data = await response.json()
-    res.send(data.features[0].geometry.coordinates)
+    res.send(data)
+    //res.send(data.features[0].geometry.coordinates)
 
 })
 
