@@ -2,7 +2,7 @@ let express = require("express")
 let router = express.Router()
 let {chargetrip_req} = require("./api_request")
 
-router.get("/", async (req,res) => {
+router.post("/", async (req,res) => {
 
     let start_coordinates = await get_coordinates_from_address(req.query.startPoint)
     let end_coordinates = await get_coordinates_from_address(req.query.endPoint)
