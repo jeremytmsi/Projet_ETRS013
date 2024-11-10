@@ -91,10 +91,10 @@ let fetchSuggestions = async (query) => {
     let response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}`)
     let data = await response.json()
 
-    return data.features.map((feature) => feature.properties.label)
+    return data.features
 }
 
-let handleSuggestions = (inputElement, suggestionsContainer) => {
+let handleSuggestions = (inputElement, suggestionsContainer, point) => {
     inputElement.addEventListener("input", async (e) => {
 
         let query = e.target.value
@@ -106,10 +106,11 @@ let handleSuggestions = (inputElement, suggestionsContainer) => {
             if(results.length > 0){
                 results.forEach(res => {
                     let suggestionItem = document.createElement("li")
-                    suggestionItem.textContent = res
+                    suggestionItem.textContent = res.properties.label
                     
                     suggestionItem.addEventListener("click", () => {
-                        inputElement.value = res
+                        inputElement.value = res.properties.label
+                        point = res.geometry.coordinates
                         suggestionsContainer.innerHTML = ""
                     })
 
@@ -135,8 +136,8 @@ let end = document.getElementById("end")
 let startSuggestions = document.getElementById("startSuggestions")
 let endSuggestions = document.getElementById("endSuggestions")
 
-handleSuggestions(start,startSuggestions)
-handleSuggestions(end,endSuggestions)
+handleSuggestions(start,startSuggestions,startPoint)
+handleSuggestions(end,endSuggestions, endPoint)
 
 // Gestion soumission form
 document.getElementById('form-submit').addEventListener("click",(e) => {
