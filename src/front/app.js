@@ -46,4 +46,45 @@ let fetchSuggestions = async (query) => {
     return data.features.map((feature) => feature.properties.label)
 }
 
+let handleSuggestions = (inputElement, suggestionsContainer) => {
+    inputElement.addEventListener("input", async (e) => {
+
+        let query = e.target.value
+
+        if(query.length > 2){
+            let results = await fetchSuggestions(query)
+            suggestionsContainer.innerHTML = ""
+
+            if(results.length > 0){
+                results.forEach(res => {
+                    let suggestionItem = document.createElement("li")
+                    suggestionItem.textContent = res
+                    
+                    suggestionItem.addEventListener("click", () => {
+                        inputElement.value = res
+                        suggestionsContainer.innerHTML = ""
+                    })
+
+                    suggestionsContainer.appendChild(suggestionItem)
+                })
+
+                suggestionsContainer.classList.remove("hidden")
+            } else {
+                suggestionsContainer.classList.add("hidden")
+            }
+        } else {
+            suggestionsContainer.innerHTML = ""
+            suggestionsContainer.classList.add("hidden")
+        }
+    })
+}
+
 displayCars()
+
+let start = document.getElementById("start")
+let end = document.getElementById("end")
+let startSuggestions = document.getElementById("startSuggestions")
+let endSuggestions = document.getElementById("endSuggestions")
+
+handleSuggestions(start,startSuggestions)
+handleSuggestions(end,endSuggestions)
