@@ -143,6 +143,22 @@ handleSuggestions(end,endSuggestions)
 // Gestion soumission form
 document.getElementById('form-submit').addEventListener("click",async (e) => {
     e.preventDefault()
+
+    clearLayers(layers)
+
+    let startAddress = start.value
+    let endAddress = end.value
+
+    let res = await fetch(`http://localhost:3000/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
+        method: "POST"
+    })
+    let data = await res.json()
+
+    console.log(data)
+
+    drawRoute(layers.routeLayer,data.features[0].geometry.coordinates)
+    addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", def)
+    addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Arrivée", def)
 })
 
 let addMarker = (layer, lat,lon,label, {icon}) => {
@@ -166,14 +182,3 @@ let drawRoute = (layer, coordinates) => {
         return null
     }
 }
-
-fetch("http://localhost:3000/api/route?startPoint=Paris&endPoint=Estrun", {
-    method: "POST"
-}).then((res) => {
-    res.json().then(data => {
-        console.log(data)
-        drawRoute(layers.routeLayer,data.features[0].geometry.coordinates)
-        addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", def)
-        addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Depart", def)
-    })
-})
