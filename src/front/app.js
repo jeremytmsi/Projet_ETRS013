@@ -18,37 +18,39 @@ let init = () => {
         debugLayer: L.layerGroup(),
     };
 
-    return { map, layers };
+    let icons = {
+        green : L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
+        }),
+        
+        red : L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
+        }),
+        
+        orange : L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
+        }),
+        
+        // Default icon
+        def : L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
+        })
+    }
+
+    return { map, layers, icons };
 }
-
-green = L.icon({
-    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-});
-
-red = L.icon({
-    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-});
-
-orange = L.icon({
-    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-});
-
-// Default icon
-def = L.icon({
-    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-});
 
 
 
@@ -129,7 +131,7 @@ let handleSuggestions = (inputElement, suggestionsContainer, point) => {
     })
 }
 
-let {map, layers} = init()
+let {map, layers, icons} = init()
 displayCars()
 
 let start = document.getElementById("start")
@@ -157,8 +159,8 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     console.log(data)
 
     drawRoute(layers.routeLayer,data.features[0].geometry.coordinates)
-    addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", def)
-    addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Arrivée", def)
+    addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", icons.def)
+    addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Arrivée", icons.def)
 })
 
 let addMarker = (layer, lat,lon,label, {icon}) => {
