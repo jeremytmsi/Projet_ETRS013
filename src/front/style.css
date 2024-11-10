@@ -45,3 +45,7 @@
 .flex-wrap {
     flex-wrap: wrap;
 }
+
+.border {
+    border: 1px solid black;
+}

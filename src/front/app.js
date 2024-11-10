@@ -1,12 +1,55 @@
-let map = L.map("map").setView([51.505,-0.09], 13)
+let init = () => {
+    let map = L.map("map").setView([51.505,-0.09], 13)
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    
+    L.control.scale({position: 'bottomright', imperial: false, maxWidth: 100}).addTo(map)
+    L.control.zoom({position: 'bottomright'}).addTo(map)
 
-L.control.scale({position: 'bottomright', imperial: false, maxWidth: 100}).addTo(map)
-L.control.zoom({position: 'bottomright'}).addTo(map)
+    let layers = {
+        routeLayer: L.layerGroup().addTo(map),
+        startEndLayer: L.layerGroup().addTo(map),
+        polygonLayer: L.layerGroup().addTo(map),
+        usedStationsLayer: L.layerGroup().addTo(map),
+        debugLayer: L.layerGroup(),
+    };
+
+    green = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+    });
+
+    red = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+    });
+
+    orange = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+    });
+
+    // Default icon
+    def = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+    });
+
+    return { map, layers };
+}
+
+
 
 let displayCars = async () => {
     let response = await fetch("http://localhost:3000/api/vehicules/all_vehicules")
@@ -14,8 +57,6 @@ let displayCars = async () => {
 
     let carList = document.getElementById("car-list")
     let template = document.getElementById("vehicle-template")
-
-    console.log(template)
 
     let selectedCar = null
 
@@ -30,9 +71,16 @@ let displayCars = async () => {
         carCard.querySelector("p").textContent = car.version
         carCard.querySelector(".vehicle-range").textContent = car.range.chargetrip_range.worst
 
-        carCard.querySelector("div").addEventListener("click", () => {
-            this.setAttribute("selectedCar", 'true')
-            selectedCar = this
+        carCard.querySelector("div").addEventListener("click", (e) => {
+
+            if(selectedCar){
+                selectedCar.classList.remove("border")
+                selectedCar.removeAttribute("selectedCar")
+            }
+
+            e.target.classList.add("border")
+            e.target.setAttribute("selectedCar","true")
+            selectedCar = e.target
         })
 
         carList.appendChild(carCard)
@@ -79,6 +127,7 @@ let handleSuggestions = (inputElement, suggestionsContainer) => {
     })
 }
 
+init()
 displayCars()
 
 let start = document.getElementById("start")
@@ -88,3 +137,8 @@ let endSuggestions = document.getElementById("endSuggestions")
 
 handleSuggestions(start,startSuggestions)
 handleSuggestions(end,endSuggestions)
+
+// Gestion soumission form
+document.getElementById('form-submit').addEventListener("click",(e) => {
+    e.preventDefault()
+})
