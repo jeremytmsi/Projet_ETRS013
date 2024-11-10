@@ -39,4 +39,11 @@ let displayCars = async () => {
     })
 }
 
+let fetchSuggestions = async (query) => {
+    let response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}`)
+    let data = await response.json()
+
+    return data.features.map((feature) => feature.properties.label)
+}
+
 displayCars()
