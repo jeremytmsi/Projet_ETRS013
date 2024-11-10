@@ -1,9 +1,13 @@
 let express = require("express")
+let cors = require("cors")
+
 let vehicules = require("./vehicule")
 let stations = require("./stations")
 
 let app = express()
 let port = 3000
+
+app.use(cors())
 
 app.get("/",(req,res) => {
     res.send({})
