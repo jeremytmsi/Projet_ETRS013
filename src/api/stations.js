@@ -11,8 +11,8 @@ router.get("/around",(req,res) => {
                     location: {
                         type: Point, 
                         coordinates: [
-                            ${req.query.latitude},
-                            ${req.query.longitude}
+                            ${req.query.lat},
+                            ${req.query.lon}
                         ]
                     },
                     distance: 10000

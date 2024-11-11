@@ -156,16 +156,18 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     })
     let route_data = await route_res.json()
 
-    let waypoints = route_data.features[0].properties.segments[0].steps
     let coordinates = route_data.features[0].geometry.coordinates
-
-    let distanceMax = 300000
-    let distanceCompleted = 0
 
     let line = drawRoute(layers.routeLayer,coordinates)
     let circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],300000)
 
-    console.log(circle)
+    let filtered_coordinates = coordinates.filter((coordinate) => !pointIsInCircle(coordinate,circle,100))
+    console.log(filtered_coordinates)
+
+    let stations_around_res = await fetch(`http://localhost:3000/api/stations/around?lat=${filtered_coordinates[0][0]}&lon=${filtered_coordinates[0][1]}`)
+    let stations_around = await stations_around_res.json()
+
+    console.log(stations_around)
 })
 
 let addMarker = (layer, lat,lon,label, {icon}) => {
@@ -198,4 +200,9 @@ let drawCircle = (layer, coordinates, autonomy) => {
     }).addTo(map)
     layer.addLayer(circle)
     return circle  
+}
+
+let pointIsInCircle = (coordinate, circle, percentage_autonomy) => {
+    let distance = circle.getLatLng().distanceTo([coordinate[1], coordinate[0]])
+    return distance <= circle.getRadius()*(percentage_autonomy/100)
 }

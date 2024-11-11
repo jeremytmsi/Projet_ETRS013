@@ -7,9 +7,6 @@ router.post("/", async (req,res) => {
     let start_coordinates = await get_coordinates_from_address(req.query.startPoint)
     let end_coordinates = await get_coordinates_from_address(req.query.endPoint)
 
-    console.log(start_coordinates)
-    console.log(end_coordinates)
-
     let response = await fetch("https://api.openrouteservice.org/v2/directions/driving-car/geojson",{
         method: "POST",
         headers: {
@@ -24,7 +21,6 @@ router.post("/", async (req,res) => {
 
     let data = await response.json()
     res.send(data)
-    //res.send(data.features[0].geometry.coordinates)
 
 })
 
