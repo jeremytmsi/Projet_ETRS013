@@ -1,5 +1,5 @@
 let addMarker = (layer, lat,lon,label, {icon}) => {
-    let marker = L.marker([lat,lon], {icon: icon}).addTo(map).bindPopup(label).openPopup()
+    let marker = L.marker([lat,lon]).addTo(map).bindPopup(label).openPopup()
     layer.addLayer(marker)
 }
 
@@ -24,13 +24,13 @@ let drawCircle = (layer, coordinates, autonomy) => {
     let circle = L.circle(coordinates, {
         color: 'green',
         fillOpacity: 0.5,
-        radius: autonomy
+        radius: autonomy*1000 - ((autonomy*1000)*0.2)
     }).addTo(map)
     layer.addLayer(circle)
     return circle  
 }
 
-let pointIsInCircle = (coordinate, circle, percentage_autonomy) => {
+let pointIsInCircle = (coordinate, circle) => {
     let distance = circle.getLatLng().distanceTo([coordinate[1], coordinate[0]])
-    return distance <= circle.getRadius()*(percentage_autonomy/100)
+    return distance <= circle.getRadius()
 }

@@ -161,11 +161,26 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
 
     let nbRecharges = Math.floor(distanceTotale/distanceMax)
     console.log(`nbRecharges : ${nbRecharges}`)
+
+    let coordinates = route_data.features[0].geometry.coordinates
+    drawRoute(layers.routeLayer,coordinates)
+
+    for(let i=0; i < nbRecharges; i++){
+        let circle = null
+        if(i==0){
+            circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],distanceMax)
+        } else {
+            circle = drawCircle(layers.routeLayer,[coordinates[0][1],coordinates[0][0]],distanceMax)
+        }
+        coordinates = coordinates.filter((coordinates) => !pointIsInCircle(coordinates,circle))
+        let coordinatesSearchStation = coordinates[0]
+        console.log(coordinatesSearchStation)
+        let station_res = await fetch(`http://localhost:3000/api/stations/around?lon=${coordinatesSearchStation[1]}&lat=${coordinatesSearchStation[0]}`)
+        let station_data = await station_res.json()
+        console.log(station_data)
+        addMarker(layers.routeLayer,coordinatesSearchStation[1],coordinatesSearchStation[0],"Recherche station",icons.def)
+    }
     
-        let coordinates = route_data.features[0].geometry.coordinates
 
-        let line = drawRoute(layers.routeLayer,coordinates)
-        let circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],300000)
 
-        let filtered_coordinates = coordinates.filter((coordinate) => !pointIsInCircle(coordinate,circle,100))
 })
