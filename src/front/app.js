@@ -151,20 +151,25 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     let startAddress = start.value
     let endAddress = end.value
 
-    let res = await fetch(`http://localhost:3000/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
+    let route_res = await fetch(`http://localhost:3000/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
         method: "POST"
     })
-    let data = await res.json()
+    let route_data = await route_res.json()
 
-    console.log(data)
+    let waypoints = route_data.features[0].properties.segments[0].steps
+    let coordinates = route_data.features[0].geometry.coordinates
 
-    drawRoute(layers.routeLayer,data.features[0].geometry.coordinates)
-    addMarker(layers.routeLayer,data.metadata.query.coordinates[0][1],data.metadata.query.coordinates[0][0],"Depart", icons.def)
-    addMarker(layers.routeLayer,data.metadata.query.coordinates[1][1],data.metadata.query.coordinates[1][0],"Arrivée", icons.def)
+    let distanceMax = 300000
+    let distanceCompleted = 0
+
+    let line = drawRoute(layers.routeLayer,coordinates)
+    let circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],300000)
+
+    console.log(circle)
 })
 
 let addMarker = (layer, lat,lon,label, {icon}) => {
-    let marker = L.marker([lat,lon]).addTo(map)
+    let marker = L.marker([lat,lon]).addTo(map).bindPopup(label).openPopup()
     layer.addLayer(marker)
 }
 
@@ -183,4 +188,14 @@ let drawRoute = (layer, coordinates) => {
         console.error("Aucune donnée")
         return null
     }
+}
+
+let drawCircle = (layer, coordinates, autonomy) => {
+    let circle = L.circle(coordinates, {
+        color: 'green',
+        fillOpacity: 0.5,
+        radius: autonomy
+    }).addTo(map)
+    layer.addLayer(circle)
+    return circle  
 }
