@@ -1,0 +1,36 @@
+let addMarker = (layer, lat,lon,label, {icon}) => {
+    let marker = L.marker([lat,lon], {icon: icon}).addTo(map).bindPopup(label).openPopup()
+    layer.addLayer(marker)
+}
+
+let clearLayers = (layers) => {
+    Object.values(layers).forEach(layer => layer.clearLayers())
+}
+
+let drawRoute = (layer, coordinates) => {
+    if(coordinates && coordinates.length > 0){
+        let routeCoords = coordinates.map(coord => [parseFloat(coord[1]),parseFloat(coord[0])])
+        let polyline = L.polyline(routeCoords,{color: "blue"})
+        layer.addLayer(polyline)
+        layer._map.fitBounds(polyline.getBounds())
+        return polyline
+    } else {
+        console.error("Aucune donnée")
+        return null
+    }
+}
+
+let drawCircle = (layer, coordinates, autonomy) => {
+    let circle = L.circle(coordinates, {
+        color: 'green',
+        fillOpacity: 0.5,
+        radius: autonomy
+    }).addTo(map)
+    layer.addLayer(circle)
+    return circle  
+}
+
+let pointIsInCircle = (coordinate, circle, percentage_autonomy) => {
+    let distance = circle.getLatLng().distanceTo([coordinate[1], coordinate[0]])
+    return distance <= circle.getRadius()*(percentage_autonomy/100)
+}

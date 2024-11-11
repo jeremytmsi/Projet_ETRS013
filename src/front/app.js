@@ -156,53 +156,16 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     })
     let route_data = await route_res.json()
 
-    let coordinates = route_data.features[0].geometry.coordinates
+    let distanceTotale = (route_data.features[0].properties.summary.distance)/1000
+    let distanceMax = 300
 
-    let line = drawRoute(layers.routeLayer,coordinates)
-    let circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],300000)
+    let nbRecharges = Math.floor(distanceTotale/distanceMax)
+    console.log(`nbRecharges : ${nbRecharges}`)
+    
+        let coordinates = route_data.features[0].geometry.coordinates
 
-    let filtered_coordinates = coordinates.filter((coordinate) => !pointIsInCircle(coordinate,circle,100))
-    console.log(filtered_coordinates)
+        let line = drawRoute(layers.routeLayer,coordinates)
+        let circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],300000)
 
-    let stations_around_res = await fetch(`http://localhost:3000/api/stations/around?lat=${filtered_coordinates[0][0]}&lon=${filtered_coordinates[0][1]}`)
-    let stations_around = await stations_around_res.json()
-
-    console.log(stations_around)
+        let filtered_coordinates = coordinates.filter((coordinate) => !pointIsInCircle(coordinate,circle,100))
 })
-
-let addMarker = (layer, lat,lon,label, {icon}) => {
-    let marker = L.marker([lat,lon]).addTo(map).bindPopup(label).openPopup()
-    layer.addLayer(marker)
-}
-
-let clearLayers = (layers) => {
-    Object.values(layers).forEach(layer => layer.clearLayers())
-}
-
-let drawRoute = (layer, coordinates) => {
-    if(coordinates && coordinates.length > 0){
-        let routeCoords = coordinates.map(coord => [parseFloat(coord[1]),parseFloat(coord[0])])
-        let polyline = L.polyline(routeCoords,{color: "blue"})
-        layer.addLayer(polyline)
-        layer._map.fitBounds(polyline.getBounds())
-        return polyline
-    } else {
-        console.error("Aucune donnée")
-        return null
-    }
-}
-
-let drawCircle = (layer, coordinates, autonomy) => {
-    let circle = L.circle(coordinates, {
-        color: 'green',
-        fillOpacity: 0.5,
-        radius: autonomy
-    }).addTo(map)
-    layer.addLayer(circle)
-    return circle  
-}
-
-let pointIsInCircle = (coordinate, circle, percentage_autonomy) => {
-    let distance = circle.getLatLng().distanceTo([coordinate[1], coordinate[0]])
-    return distance <= circle.getRadius()*(percentage_autonomy/100)
-}
