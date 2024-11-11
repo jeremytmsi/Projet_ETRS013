@@ -22,8 +22,8 @@ let drawRoute = (layer, coordinates) => {
 
 let drawCircle = (layer, coordinates, autonomy) => {
     let circle = L.circle(coordinates, {
-        color: 'green',
-        fillOpacity: 0.5,
+        color: 'transparent',
+        fillOpacity: 0,
         radius: autonomy*1000 - ((autonomy*1000)*0.2)
     }).addTo(map)
     layer.addLayer(circle)

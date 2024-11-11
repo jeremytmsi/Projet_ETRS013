@@ -155,6 +155,7 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
         method: "POST"
     })
     let route_data = await route_res.json()
+    console.log(route_data)
 
     let distanceTotale = (route_data.features[0].properties.summary.distance)/1000
     let distanceMax = 300
@@ -163,6 +164,7 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     console.log(`nbRecharges : ${nbRecharges}`)
 
     let coordinates = route_data.features[0].geometry.coordinates
+    let base_coordinates = route_data.features[0].geometry.coordinates
     drawRoute(layers.routeLayer,coordinates)
 
     for(let i=0; i < nbRecharges; i++){
@@ -179,6 +181,10 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
         let station_data = await station_res.json()
         console.log(station_data)
         addMarker(layers.routeLayer,coordinatesSearchStation[1],coordinatesSearchStation[0],"Recherche station",icons.def)
+
+        //clearLayers(layers)
+        
+
     }
     
 
