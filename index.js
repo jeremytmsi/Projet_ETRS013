@@ -7,7 +7,7 @@ let stations = require("./src/api/stations")
 let routes = require("./src/api/route")
 
 let app = express()
-let port = 3000
+let port = process.env.PORT || 3000
 
 app.use(cors())
 
