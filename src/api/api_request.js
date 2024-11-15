@@ -1,5 +1,5 @@
-let client_id = "6710b564021ae87118927054"
-let app_id = "6710b564021ae87118927056"
+let client_id = process.env.CHARGETRIP_CLIENT_ID
+let app_id = process.env.CHARGETRIP_APP_ID
 let base_url = "https://api.chargetrip.io/graphql"
 
 export let chargetrip_req = async (query) => {

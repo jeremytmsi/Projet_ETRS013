@@ -1,6 +1,5 @@
 let init = () => {
-    
-    let map = L.map("map").setView([51.505,-0.09], 13)
+    let map = L.map("map").setView([45.564,5.914], 13)
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -55,7 +54,7 @@ let init = () => {
 
 
 let displayCars = async () => {
-    let response = await fetch("http://localhost:3000/api/vehicules/all_vehicules")
+    let response = await fetch("/api/vehicules/all_vehicules")
     let cars = await response.json()
 
     let carList = document.getElementById("car-list")
@@ -151,7 +150,7 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     let startAddress = start.value
     let endAddress = end.value
 
-    let route_res = await fetch(`http://localhost:3000/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
+    let route_res = await fetch(`/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
         method: "POST"
     })
     let route_data = await route_res.json()
@@ -161,7 +160,6 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     let distanceMax = 300
 
     let nbRecharges = Math.floor(distanceTotale/distanceMax)
-    console.log(`nbRecharges : ${nbRecharges}`)
 
     let coordinates = route_data.features[0].geometry.coordinates
     let base_coordinates = route_data.features[0].geometry.coordinates
@@ -179,7 +177,7 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
         coordinates = coordinates.filter((coordinates) => !pointIsInCircle(coordinates,circle))
         let coordinatesSearchStation = coordinates[0]
         console.log(coordinatesSearchStation)
-        let station_res = await fetch(`http://localhost:3000/api/stations/around?lon=${coordinatesSearchStation[1]}&lat=${coordinatesSearchStation[0]}`)
+        let station_res = await fetch(`/api/stations/around?lon=${coordinatesSearchStation[1]}&lat=${coordinatesSearchStation[0]}`)
         let station_data = await station_res.json()
         station_data = station_data.stationAround
         console.log(station_data)

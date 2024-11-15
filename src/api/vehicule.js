@@ -2,8 +2,8 @@ let express = require("express")
 let router = express.Router()
 let {chargetrip_req} = require("./api_request")
 
-router.get("/all_vehicules",(req,res) => {
-    chargetrip_req(
+router.get("/all_vehicules",async (req,res) => {
+    let data = await chargetrip_req(
         `
             query {
                 vehicleList {
@@ -25,10 +25,8 @@ router.get("/all_vehicules",(req,res) => {
                 }
             }
         `
-    ).then(data => {
-        data = data["vehicleList"]
-        res.send(data)
-    }).catch(err => console.error(err))
+    )
+    res.send(data.vehicleList)
 })
 
 module.exports = router
