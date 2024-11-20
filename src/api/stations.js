@@ -3,6 +3,7 @@ let router = express.Router()
 
 let {chargetrip_req} = require("./api_request")
 
+// Récupère la liste des stations à proxmité d'un point
 router.get("/around",async (req,res) => {
     let response = await chargetrip_req(`
         query stationAround {
@@ -29,6 +30,7 @@ router.get("/around",async (req,res) => {
     res.send(response)
 })
 
+// Affiche les détails d'une station
 router.get("/details",async (req,res) => {
     let response = await chargetrip_req(`
         query station {

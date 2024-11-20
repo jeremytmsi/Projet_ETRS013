@@ -1,3 +1,6 @@
+/**
+ * Initialise la carte
+ */
 let init = () => {
     let map = L.map("map").setView([45.564,5.914], 13)
 
@@ -52,7 +55,7 @@ let init = () => {
 }
 
 
-
+// Affiche la liste des voitures
 let displayCars = async () => {
     let response = await fetch("/api/vehicules/all_vehicules")
     let cars = await response.json()
@@ -88,7 +91,6 @@ let displayCars = async () => {
         carList.appendChild(carCard)
     })
 }
-
 let fetchSuggestions = async (query) => {
     let response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}`)
     let data = await response.json()
@@ -150,6 +152,7 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     let startAddress = start.value
     let endAddress = end.value
 
+    // On calcule la route
     let route_res = await fetch(`/api/route?startPoint=${startAddress}&endPoint=${endAddress}`,{
         method: "POST"
     })
@@ -163,8 +166,14 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
 
     let coordinates = route_data.features[0].geometry.coordinates
     let base_coordinates = route_data.features[0].geometry.coordinates
+
+    //Trace la route
     drawRoute(layers.routeLayer,coordinates)
+
+    // Ajoute un marqueur au départ
     addMarker(layers.routeLayer,route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0],"Depart", icons.def)
+
+    // Ajoute un marqueur à l'arrivée
     addMarker(layers.routeLayer,route_data.metadata.query.coordinates[1][1],route_data.metadata.query.coordinates[1][0],"Arrivée", icons.def)
 
     for(let i=0; i < nbRecharges; i++){
@@ -176,12 +185,12 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
         }
         coordinates = coordinates.filter((coordinates) => !pointIsInCircle(coordinates,circle))
         let coordinatesSearchStation = coordinates[0]
-        console.log(coordinatesSearchStation)
+
         let station_res = await fetch(`/api/stations/around?lon=${coordinatesSearchStation[1]}&lat=${coordinatesSearchStation[0]}`)
         let station_data = await station_res.json()
         station_data = station_data.stationAround
         console.log(station_data)
-        addMarker(layers.routeLayer,coordinatesSearchStation[1],coordinatesSearchStation[0],"Recherche station",icons.def)
+        addMarker(layers.routeLayer,coordinatesSearchStation[1],coordinatesSearchStation[0],`${coordinatesSearchStation[1]}, ${coordinatesSearchStation[0]}`,icons.def)
 
         //clearLayers(layers)
         

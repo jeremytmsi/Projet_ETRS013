@@ -30,6 +30,7 @@ let drawCircle = (layer, coordinates, autonomy) => {
     return circle  
 }
 
+// Vérifie si un point est dans un cercle
 let pointIsInCircle = (coordinate, circle) => {
     let distance = circle.getLatLng().distanceTo([coordinate[1], coordinate[0]])
     return distance <= circle.getRadius()
