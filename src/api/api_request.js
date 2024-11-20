@@ -2,7 +2,7 @@ let client_id = process.env.CHARGETRIP_CLIENT_ID
 let app_id = process.env.CHARGETRIP_APP_ID
 let base_url = "https://api.chargetrip.io/graphql"
 
-export let chargetrip_req = async (query) => {
+let chargetrip_req = async (query) => {
     let res = await fetch(base_url, {
         method: "POST",
         headers: {
@@ -18,3 +18,5 @@ export let chargetrip_req = async (query) => {
     let {data} = await res.json()
     return data
 }
+
+module.exports = {chargetrip_req}
