@@ -12,6 +12,7 @@ router.get("/all_vehicules",async (req,res) => {
                     naming {
                         make
                         model
+                        version
                     }
                     range {
                         chargetrip_range {

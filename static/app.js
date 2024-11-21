@@ -72,8 +72,8 @@ let displayCars = async () => {
         img.src = car.media.image.url
         img.alt = `${car.naming.make} ${car.naming.model}`
 
-        carCard.querySelector("h3").textContent = `${car.naming.make} ${car.naming.model}`
-        carCard.querySelector("p").textContent = car.version
+        carCard.querySelector("h6").textContent = `${car.naming.make} ${car.naming.model}`
+        carCard.querySelector("p").textContent = car.naming.version
         carCard.querySelector(".vehicle-range").textContent = car.range.chargetrip_range.worst
 
         carCard.querySelector("div").addEventListener("click", (e) => {
