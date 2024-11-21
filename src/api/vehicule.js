@@ -17,6 +17,7 @@ router.get("/all_vehicules",async (req,res) => {
                     range {
                         chargetrip_range {
                             worst
+                            best
                         }
                     }
                     media {

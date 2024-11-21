@@ -54,6 +54,9 @@ let init = () => {
     return { map, layers, icons };
 }
 
+let selectedCarElement = null
+let selectedCar = null
+
 
 // Affiche la liste des voitures
 let displayCars = async () => {
@@ -62,8 +65,6 @@ let displayCars = async () => {
 
     let carList = document.getElementById("car-list")
     let template = document.getElementById("vehicle-template")
-
-    let selectedCar = null
 
     cars.forEach((car) => {
         let carCard = template.content.cloneNode(true)
@@ -74,18 +75,21 @@ let displayCars = async () => {
 
         carCard.querySelector("h6").textContent = `${car.naming.make} ${car.naming.model}`
         carCard.querySelector("p").textContent = car.naming.version
-        carCard.querySelector(".vehicle-range").textContent = car.range.chargetrip_range.worst
+        carCard.querySelector(".vehicle-range").textContent = car.range.chargetrip_range.best
 
         carCard.querySelector("div").addEventListener("click", (e) => {
 
+            console.log(selectedCar)
+
             if(selectedCar){
-                selectedCar.classList.remove("border")
-                selectedCar.removeAttribute("selectedCar")
+                selectedCarElement.classList.remove("border")
+                selectedCarElement.removeAttribute("selectedCar")
             }
 
             e.target.classList.add("border")
             e.target.setAttribute("selectedCar","true")
-            selectedCar = e.target
+            selectedCarElement = e.target
+            selectedCar = car
         })
 
         carList.appendChild(carCard)
@@ -160,9 +164,9 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     console.log(route_data)
 
     let distanceTotale = (route_data.features[0].properties.summary.distance)/1000
-    let distanceMax = 300
 
-    let nbRecharges = Math.floor(distanceTotale/distanceMax)
+    let nbRecharges = Math.floor(distanceTotale/selectedCar.range.chargetrip_range.best)
+    console.log(nbRecharges)
 
     let coordinates = route_data.features[0].geometry.coordinates
     let base_coordinates = route_data.features[0].geometry.coordinates
@@ -179,9 +183,9 @@ document.getElementById('form-submit').addEventListener("click",async (e) => {
     for(let i=0; i < nbRecharges; i++){
         let circle = null
         if(i==0){
-            circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],distanceMax)
+            circle = drawCircle(layers.routeLayer,[route_data.metadata.query.coordinates[0][1],route_data.metadata.query.coordinates[0][0]],selectedCar.range.chargetrip_range.worst)
         } else {
-            circle = drawCircle(layers.routeLayer,[coordinates[0][1],coordinates[0][0]],distanceMax)
+            circle = drawCircle(layers.routeLayer,[coordinates[0][1],coordinates[0][0]],selectedCar.range.chargetrip_range.worst)
         }
         coordinates = coordinates.filter((coordinates) => !pointIsInCircle(coordinates,circle))
         let coordinatesSearchStation = coordinates[0]
